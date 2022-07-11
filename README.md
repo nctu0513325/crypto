@@ -8,3 +8,4 @@ https://cb.run/uBZp
 
 幣安API
 https://binance-docs.github.io/apidocs/futures/en/#change-log
+https://www.rayskyinvest.com/21405/binance-macd
