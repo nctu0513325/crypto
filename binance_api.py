@@ -29,7 +29,7 @@ class crypto_info:
 if __name__ == "__main__":
     # read api key
     cfg = ConfigParser()
-    cfg.read('API.ini')
+    cfg.read('../API.ini')
     api_key    = cfg['main']['API_KEY']
     api_secret = cfg['main']['SECRET_KEY']
     
