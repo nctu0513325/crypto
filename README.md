@@ -8,3 +8,6 @@ https://cb.run/uBZp
 
 幣安API
 https://binance-docs.github.io/apidocs/futures/en/#change-log
+
+transection rule
+https://web.coinrule.com/
