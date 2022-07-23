@@ -1,4 +1,4 @@
-import btalib
+import btalib, os
 from configparser import ConfigParser
 from binance.client import Client
 import pandas as pd
@@ -9,6 +9,9 @@ class crypto_info:
         self.client = client
         self.pair = pair
         
+        # create folder to save log
+        if not os.path.isdir('history'):
+            os.mkdir('history')
         
         self.bars = client.get_historical_klines(self.pair, '5m', limit=300)
         for line in self.bars:
@@ -17,14 +20,14 @@ class crypto_info:
         self.df = pd.DataFrame(self.bars, columns=['date', 'open', 'high', 'low', 'close'])
         self.df.set_index('date', inplace=True)
         self.df.index = pd.to_datetime(self.df.index, unit='ms')
-        self.df.to_csv(f'{self.pair}.csv')
-        self.df = pd.read_csv(f'{self.pair}.csv', index_col=0)
+        self.df.to_csv(f'history/{self.pair}.csv')
+        self.df = pd.read_csv(f'history/{self.pair}.csv', index_col=0)
         
         # calculate sma
         self.df['sma'] = btalib.sma(self.df.close, period=20).df
         # calculate RSI
         self.df['RSI'] = btalib.rsi(self.df.close, period = 14).df
-        print(self.df.tail(10))
+        # print(self.df.tail(10))
 
 if __name__ == "__main__":
     # read api key
@@ -37,5 +40,12 @@ if __name__ == "__main__":
     client = Client(api_key, api_secret)
     # initialize
     client.API_URL = 'https://api.binance.com/api'
+    # get all trading pair
+    all_pair = []
+    for info in client.get_all_pairs():
+        if 'USDT' in info['symbol']:
+            all_pair.append(info['symbol'])
     
-    crypto_info(client, "BTCUSDT")
+    
+    print(len(all_pair))
+    # crypto_info(client, "BTCUSDT")

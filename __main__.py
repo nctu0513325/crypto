@@ -1,6 +1,7 @@
 from configparser import ConfigParser
 from binance.client import Client
 from binance_api import crypto_info
+from trade_view import trade_view
 
 if __name__ == '__main__':
     buy_flag  = 0
@@ -16,18 +17,21 @@ if __name__ == '__main__':
     client = Client(api_key, api_secret)
     # initialize
     client.API_URL = 'https://api.binance.com/api'
-
-    crypto_list = [i.replace('\n', '') for i in open('crypto_pair.txt')]
+    # get all trading pair
+    all_pair = []
+    for info in client.get_margin_all_pairs():
+        if 'USDT' in info['symbol']:
+            all_pair.append(info['symbol'])
     
     while keep_flag:
         if buy_flag:
             # only search for one crypto
             pass
         elif not buy_flag:
-            for crypto in crypto_list:
-                # info = client.get_symbol_info(crypto)
-                # print(info)
-                print(crypto)
-                tmp = crypto_info(client, crypto)
-                print(tmp.bars)
+            for crypto in all_pair:
+                crypto_trade_view = trade_view(crypto)
+                crypto_history    = crypto_info(client, crypto)
+                
+                if 'STRONG' in crypto_trade_view.analysis.summary['RECOMMENDATION']:
+                    print('yes')
         keep_flag = 0
