@@ -10,7 +10,7 @@ class trade_view:
             symbol= crypto,
             exchange= "binance",
             screener= "crypto",
-            interval= "1m",
+            interval= "5m",
             timeout=None
             )
         self.analysis = self.handler.get_analysis()

@@ -4,7 +4,6 @@ from binance.client import Client
 import pandas as pd
 
 class crypto_info:
-
     def __init__(self, client, pair):
         self.client = client
         self.pair = pair
@@ -13,7 +12,7 @@ class crypto_info:
         if not os.path.isdir('history'):
             os.mkdir('history')
         
-        self.bars = client.get_historical_klines(self.pair, '5m', limit=300)
+        self.bars = client.get_historical_klines(self.pair, '30m', limit=100)
         for line in self.bars:
             del line[5:]
 
@@ -27,8 +26,10 @@ class crypto_info:
         self.df['sma'] = btalib.sma(self.df.close, period=20).df
         # calculate RSI
         self.df['RSI'] = btalib.rsi(self.df.close, period = 14).df
-        # print(self.df.tail(10))
-
+        
+        # calculate past
+        self.change = (self.df['close'][-1]-self.df['close'][-2])/self.df['close'][-1]
+        
 if __name__ == "__main__":
     # read api key
     cfg = ConfigParser()
@@ -40,12 +41,5 @@ if __name__ == "__main__":
     client = Client(api_key, api_secret)
     # initialize
     client.API_URL = 'https://api.binance.com/api'
-    # get all trading pair
-    all_pair = []
-    for info in client.get_all_pairs():
-        if 'USDT' in info['symbol']:
-            all_pair.append(info['symbol'])
-    
-    
-    print(len(all_pair))
-    # crypto_info(client, "BTCUSDT")
+
+    crypto_info(client, 'BTCUSDT')
